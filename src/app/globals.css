@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: #111927;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -57,6 +57,81 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+}
+
+.inn {
+}
+
+@layer components {
+  .grid-item-box {
+    @apply border border-borderColor rounded-lg shadow-sm bg-[rgba(0,0,0,0.24)];
+  }
+}
+
+.grid-container {
+  display: grid;
+
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  grid-gap: 10px;
+  padding-bottom: 0px; /* Default padding */
+}
+
+/* For widths above 1280px */
+@media (min-width: 1280px) {
+  .grid-container {
+    grid-template-areas:
+      "players main main stat"
+      "players main main cta"
+      "players main main cta"
+      "players pot pot cta";
+    grid-template-columns: 288px 1fr 1fr 360px;
+  }
+}
+
+/* For widths between 1024px and 1280px */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .grid-container {
+    grid-template-areas:
+      "main stat"
+      "main cta"
+      "players cta"
+      "players cta"
+      "pot pot";
+    grid-template-columns: 60% 40%;
+  }
+}
+
+/* For widths below 1024px */
+@media (max-width: 1023px) {
+  .grid-container {
+    grid-template-areas:
+      "main"
+      "players"
+      "stat"
+      "pot"
+      "cta";
+    grid-template-columns: 100%;
+    padding-bottom: 0px; /* Specific padding for smaller screens */
+  }
+}
+
+.grid-players {
+  grid-area: players;
+}
+
+.grid-main {
+  grid-area: main;
+}
+.grid-stat {
+  grid-area: stat;
+}
+.grid-pot {
+  grid-area: pot;
+}
+.grid-cta {
+  grid-area: cta;
 }
 
 @layer base {
