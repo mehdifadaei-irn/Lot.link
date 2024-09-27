@@ -1,14 +1,11 @@
 "use client";
-import React, { useCallback, useMemo, useState } from "react";
-import { Card, CardContent, CardFooter } from "../ui/card";
-import Image from "next/image";
-import { useReadContracts } from "wagmi";
-import { FactoryContract } from "@/constants";
-import { Factory } from "lucide-react";
-import { polygon } from "viem/chains";
 import { RoomAbi } from "@/assets/abi/mainAbi";
-import { formatEther } from "viem";
+import Image from "next/image";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { formatEther } from "viem";
+import { polygon } from "viem/chains";
+import { useReadContracts } from "wagmi";
 
 interface ChanceRoomCardProps {
   chanceRoomAddress: `0x${string}` | undefined;
@@ -25,6 +22,7 @@ const ChanceRoomCard = ({
   chanceRoomAddress,
   active = false,
 }: ChanceRoomCardProps) => {
+  const [parsedNice1, setParsedNice1] = useState<null | string>(null);
   const { data, isLoading, refetch, queryKey, isSuccess } = useReadContracts({
     contracts: [
       {
@@ -68,20 +66,31 @@ const ChanceRoomCard = ({
     }
   }, []);
 
-  const nice1 = useMemo(() => {
-    if (isSuccess && Array.isArray(data)) {
-      //@ts-ignore
-      // let parsed = atob(data[2].result?.slice(29).toString());
+  // const nice1 = useMemo(() => {
+  //   if (isSuccess && Array.isArray(data)) {
+  //     //@ts-ignore
+  //     // let parsed = atob(data[2].result?.slice(29).toString());
+  //     let parsed2;
+  //     if (data[2].result) {
+  //       parsed2 = Buffer.from(data[2].result?.slice(29).toString(), "base64");
+  //     }
+  //     //@ts-ignore
+  //     // console.log(JSON.parse(parsed2).image, "p22222");
+  //     //@ts-ignore
+  //     return parseTokenURI1(parsed2);
 
-      let parsed2 = Buffer.from(data[2].result?.slice(29).toString(), "base64");
-      //@ts-ignore
-      // console.log(JSON.parse(parsed2).image, "p22222");
-      //@ts-ignore
-      return parseTokenURI1(parsed2);
+  //     // return parseTokenURI1(parsed);
+  //   }
+  // }, [data]);
 
-      // return parseTokenURI1(parsed);
+  useEffect(() => {
+    if (isSuccess && data[2].result && data[2].result?.slice(29)) {
+      let parsed = Buffer.from(data[2].result?.slice(29).toString(), "base64");
+      //@ts-ignore
+      const nice1 = parseTokenURI1(parsed);
+      setParsedNice1(nice1);
     }
-  }, [data]);
+  }, [isSuccess, data]);
 
   if (isLoading) {
     return null;
@@ -103,9 +112,9 @@ const ChanceRoomCard = ({
       }}
     >
       <div className="w-full h-32 rounded-t-xl">
-        {nice1 && (
+        {parsedNice1 && (
           <Image
-            src={nice1 || ""}
+            src={parsedNice1 || ""}
             // src={parsed}
             width={126}
             height={50}

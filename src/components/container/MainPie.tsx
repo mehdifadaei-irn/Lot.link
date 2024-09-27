@@ -31,7 +31,7 @@ import { setChanceRoomStatus } from "@/redux/spinner/spinnerSlice";
 import { AppDispatch, RootState } from "@/redux/stores/store";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { polygon } from "viem/chains";
 import { useReadContract } from "wagmi";
@@ -77,6 +77,7 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
   const { isMobile } = useUnderMobileWindow();
   let myPidata: { name: string; value: number }[] = [];
   let mychartConfig: ChartConfig = {};
+  const [parsedNice1, setParsedNice1] = useState<null | string>(null);
 
   const {
     spinnerActiveIndex: SpinnerActiveIndex,
@@ -139,19 +140,34 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
     }
   }, []);
 
-  const nice1 = useMemo(() => {
-    if (isSuccess) {
-      //@ts-ignore
-      // let parsed = atob(TokenUri?.slice(29).toString());
-      let parsed2 = Buffer.from(TokenUri?.slice(29).toString(), "base64");
-      //@ts-ignore
-      // console.log(JSON.parse(parsed2).image, "p22222");
-      //@ts-ignore
-      return parseTokenURI(parsed2);
+  // const nice1 = useMemo(() => {
+  //   if (isSuccess) {
+  //     //@ts-ignore
+  //     // let parsed = atob(TokenUri?.slice(29).toString());
+  //     let parsed2;
+  //     if (TokenUri) {
+  //       parsed2 = Buffer.from(
+  //         TokenUri?.slice(29).toString() as string,
+  //         "base64"
+  //       );
+  //     }
+  //     //@ts-ignore
+  //     // console.log(JSON.parse(parsed2).image, "p22222");
+  //     //@ts-ignore
+  //     return parseTokenURI(parsed2);
 
-      // return parseTokenURI(parsed);
+  //     // return parseTokenURI(parsed);
+  //   }
+  // }, [isSuccess]);
+
+  useEffect(() => {
+    if (isSuccess && TokenUri && TokenUri.slice(29)) {
+      let parsed = Buffer.from(TokenUri.slice(29).toString(), "base64");
+      //@ts-ignore
+      const nice1 = parseTokenURI(parsed);
+      setParsedNice1(nice1);
     }
-  }, [isSuccess]);
+  }, [isSuccess, TokenUri]);
 
   if (pieData.length !== 0) {
     pieData.map((data, i) => {
@@ -292,9 +308,9 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
                   className="absolute opacity-85 w-full -z-10 flex justify-center items-center sm:h-[450px] max-[500px]:h-[376px] h-[55vh]
                  max-[430px]:h-[370px] max-[400px]:h-[290px] "
                 >
-                  {nice1 && (
+                  {parsedNice1 && (
                     <img
-                      src={nice1 || ""}
+                      src={parsedNice1 || ""}
                       alt="Main Image"
                       width={350}
                       height={350}
