@@ -74,8 +74,6 @@ const ChanceRoomStat = ({ Round, chanceRoomAddress }: ChanceRoomStatProps) => {
       new Date().getTime();
   }
 
-  console.log(Number(playerTicket || 0) / MaxTickets, "pT");
-
   if (isError) {
     return (
       <div className="w-full text-slate-100 font-bold !min-h-64 px-3 pt-5 pb-4 ">

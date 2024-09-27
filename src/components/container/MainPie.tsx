@@ -4,25 +4,18 @@ import {
   ChevronLeft,
   ChevronRight,
   History,
-  TrendingUp,
 } from "lucide-react";
-import { Cell, Label, Pie, PieChart, Sector } from "recharts";
+import { Cell, Pie, PieChart, Sector } from "recharts";
 import { PieSectorDataItem } from "recharts/types/polar/Pie";
+import { Buffer } from "buffer";
 
-import {
-  motion,
-  useAnimation,
-  useAnimationControls,
-  useAnimationFrame,
-} from "framer-motion";
+import { motion } from "framer-motion";
 
+import { RoomAbi } from "@/assets/abi/mainAbi";
 import {
   Card as CardContainer,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   ChartConfig,
@@ -30,22 +23,19 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import Link from "next/link";
-import { buttonVariants } from "../ui/button";
-import tinycolor from "tinycolor2";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useOnHoverOpacity } from "@/hooks/gamePageHooks/useOnHoverOpacity";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
 import { useUnderMobileWindow } from "@/hooks/useUnderMobileWindow";
-import { useSearchParams } from "next/navigation";
-import { useReadContract } from "wagmi";
-import { RoomAbi } from "@/assets/abi/mainAbi";
-import { polygon } from "viem/chains";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/stores/store";
 import { stringToColour } from "@/lib/generateColorFromAddress";
+import { cn } from "@/lib/utils";
 import { setChanceRoomStatus } from "@/redux/spinner/spinnerSlice";
+import { AppDispatch, RootState } from "@/redux/stores/store";
+import Image from "next/image";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { polygon } from "viem/chains";
+import { useReadContract } from "wagmi";
+import { buttonVariants } from "../ui/button";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#00C49F"];
 export const description = "A donut chart with an active sector";
@@ -129,10 +119,12 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
     chainId: polygon.id,
   });
 
-  if (statusSuccess) {
-    //@ts-ignore
-    dispatch(setChanceRoomStatus(StautsData));
-  }
+  useEffect(() => {
+    if (statusSuccess) {
+      //@ts-ignore
+      dispatch(setChanceRoomStatus(StautsData));
+    }
+  }, [statusSuccess, StautsData, dispatch]);
 
   const parseTokenURI = useCallback((result: string | null): string | null => {
     try {
@@ -150,8 +142,14 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
   const nice1 = useMemo(() => {
     if (isSuccess) {
       //@ts-ignore
-      let parsed = atob(TokenUri?.slice(29).toString());
-      return parseTokenURI(parsed);
+      // let parsed = atob(TokenUri?.slice(29).toString());
+      let parsed2 = Buffer.from(TokenUri?.slice(29).toString(), "base64");
+      //@ts-ignore
+      // console.log(JSON.parse(parsed2).image, "p22222");
+      //@ts-ignore
+      return parseTokenURI(parsed2);
+
+      // return parseTokenURI(parsed);
     }
   }, [isSuccess]);
 
@@ -166,6 +164,20 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
       }
     });
   }
+
+  useEffect(() => {
+    if (pieData.length !== 0) {
+      pieData.forEach((data, i) => {
+        if (data.value !== 0) {
+          myPidata.push({ name: data.name, value: data.value });
+          mychartConfig[data.name] = {
+            label: data.name.slice(2, 8),
+            color: stringToColour(data.name),
+          };
+        }
+      });
+    }
+  }, [pieData]);
 
   if (isSuccess) {
   }
@@ -280,16 +292,18 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
                   className="absolute opacity-85 w-full -z-10 flex justify-center items-center sm:h-[450px] max-[500px]:h-[376px] h-[55vh]
                  max-[430px]:h-[370px] max-[400px]:h-[290px] "
                 >
-                  <img
-                    src={nice1 || ""}
-                    alt="Main Image"
-                    width={350}
-                    height={350}
-                    className="rounded-full mx-auto translate-y-1 z-0 transition-all duration-500 ease-out"
-                    style={{
-                      opacity: SpinnerActiveIndex === undefined ? 0.9 : 0,
-                    }}
-                  />
+                  {nice1 && (
+                    <img
+                      src={nice1 || ""}
+                      alt="Main Image"
+                      width={350}
+                      height={350}
+                      className="rounded-full mx-auto translate-y-1 z-0 transition-all duration-500 ease-out"
+                      style={{
+                        opacity: SpinnerActiveIndex === undefined ? 0.9 : 0,
+                      }}
+                    />
+                  )}
                 </div>
 
                 <ChartContainer

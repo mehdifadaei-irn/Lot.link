@@ -71,8 +71,15 @@ const ChanceRoomCard = ({
   const nice1 = useMemo(() => {
     if (isSuccess && Array.isArray(data)) {
       //@ts-ignore
-      let parsed = atob(data[2].result?.slice(29).toString());
-      return parseTokenURI1(parsed);
+      // let parsed = atob(data[2].result?.slice(29).toString());
+
+      let parsed2 = Buffer.from(data[2].result?.slice(29).toString(), "base64");
+      //@ts-ignore
+      // console.log(JSON.parse(parsed2).image, "p22222");
+      //@ts-ignore
+      return parseTokenURI1(parsed2);
+
+      // return parseTokenURI1(parsed);
     }
   }, [data]);
 
@@ -96,14 +103,16 @@ const ChanceRoomCard = ({
       }}
     >
       <div className="w-full h-32 rounded-t-xl">
-        <Image
-          src={nice1 || ""}
-          // src={parsed}
-          width={126}
-          height={50}
-          alt={(data?.at(3)?.result as string)?.slice(0, 15) || ""}
-          className="rounded-t-xl !max-w-none"
-        />
+        {nice1 && (
+          <Image
+            src={nice1 || ""}
+            // src={parsed}
+            width={126}
+            height={50}
+            alt={(data?.at(3)?.result as string)?.slice(0, 15) || ""}
+            className="rounded-t-xl !max-w-none"
+          />
+        )}
       </div>
       <div className="!h-8 flex flex-col justify-  w-full   text-slate-100 text-[12px] -translate-y-1 ">
         <span className="tracking-tight">
