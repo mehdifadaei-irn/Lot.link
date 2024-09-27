@@ -162,10 +162,15 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
 
   useEffect(() => {
     if (isSuccess && TokenUri && TokenUri.slice(29)) {
-      let parsed = Buffer.from(TokenUri.slice(29).toString(), "base64");
-      //@ts-ignore
-      const nice1 = parseTokenURI(parsed);
-      setParsedNice1(nice1);
+      try {
+        let parsed = Buffer.from(TokenUri.slice(29).toString(), "base64");
+        //@ts-ignore
+        const nice1 = parseTokenURI(parsed);
+        setParsedNice1(nice1);
+      } catch (error) {
+        console.error("Error parsing TokenUri:", error);
+        // Handle the error appropriately
+      }
     }
   }, [isSuccess, TokenUri]);
 

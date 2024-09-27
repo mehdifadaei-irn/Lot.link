@@ -85,10 +85,18 @@ const ChanceRoomCard = ({
 
   useEffect(() => {
     if (isSuccess && data[2].result && data[2].result?.slice(29)) {
-      let parsed = Buffer.from(data[2].result?.slice(29).toString(), "base64");
-      //@ts-ignore
-      const nice1 = parseTokenURI1(parsed);
-      setParsedNice1(nice1);
+      try {
+        let parsed = Buffer.from(
+          data[2].result?.slice(29).toString(),
+          "base64"
+        );
+        //@ts-ignore
+        const nice1 = parseTokenURI1(parsed);
+        setParsedNice1(nice1);
+      } catch (error) {
+        console.error("Error parsing data:", error);
+        // Handle the error appropriately
+      }
     }
   }, [isSuccess, data]);
 
