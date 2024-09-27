@@ -41,7 +41,7 @@ const Header = () => {
   const { address, isConnected } = useAccount();
 
   const { data, isError, isLoading, isFetched } = useBalance({
-    address: address || "0x0000000000",
+    address: address || "0x0000000000000000000000000000000000000000",
   });
 
   const spinner = useSelector((state: RootState) => state?.spinner.value);
