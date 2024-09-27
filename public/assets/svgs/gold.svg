@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 284 128" focusable="false" class="chakra-icon css-1wr7qtm">
+    <g clip-path="url(#clip0_4248_209461)">
+        <g opacity="0.5" filter="url(#filter0_f_4248_209461)">
+            <path d="M248.5 -24C248.5 46.6924 121.349 104 -35.5 104V-24H248.5Z"
+                fill="url(#paint0_radial_4248_209461)"></path>
+        </g>
+    </g>
+    <defs>
+        <filter id="filter0_f_4248_209461" x="-51.5" y="-40" width="316" height="160"
+            filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
+            <feGaussianBlur stdDeviation="8" result="effect1_foregroundBlur_4248_209461"></feGaussianBlur>
+        </filter>
+        <radialGradient id="paint0_radial_4248_209461" cx="0" cy="0" r="1"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(-35.5 -24.0007) rotate(90) scale(128 284)">
+            <stop stop-color="#F8CC32"></stop>
+            <stop offset="1" stop-color="#F8CC32" stop-opacity="0"></stop>
+        </radialGradient>
+        <clipPath id="clip0_4248_209461">
+            <rect width="284" height="128" fill="white"></rect>
+        </clipPath>
+    </defs>
+</svg>

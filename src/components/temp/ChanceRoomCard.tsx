@@ -43,7 +43,7 @@ const ChanceRoomCard = ({
         address: chanceRoomAddress,
         abi: RoomAbi,
         functionName: "tokenURI",
-        args: ["0"],
+        args: [BigInt(0)],
         chainId: polygon.id,
       },
       {
@@ -52,27 +52,8 @@ const ChanceRoomCard = ({
         functionName: "name",
         chainId: polygon.id,
       },
-      {
-        address: chanceRoomAddress,
-        abi: RoomAbi,
-        functionName: "lockedNFT",
-        chainId: polygon.id,
-      },
     ],
   });
-  // //@ts-ignore
-  const parseTokenURI = (result: string | null): string | null => {
-    try {
-      const parsed = result ? JSON.parse(result) : null;
-      if (parsed && typeof parsed === "object" && "image" in parsed) {
-        return parsed.image;
-      }
-      return null;
-    } catch (error) {
-      console.error("Error parsing token URI:", error);
-      return null;
-    }
-  };
 
   const parseTokenURI1 = useCallback((result: string | null): string | null => {
     try {
@@ -93,7 +74,7 @@ const ChanceRoomCard = ({
       let parsed = atob(data[2].result?.slice(29).toString());
       return parseTokenURI1(parsed);
     }
-  }, [isSuccess]);
+  }, [data]);
 
   if (isLoading) {
     return null;
@@ -120,7 +101,7 @@ const ChanceRoomCard = ({
           // src={parsed}
           width={126}
           height={50}
-          alt="nft"
+          alt={(data?.at(3)?.result as string)?.slice(0, 15) || ""}
           className="rounded-t-xl !max-w-none"
         />
       </div>
@@ -131,10 +112,10 @@ const ChanceRoomCard = ({
         {/* <span className="tracking-tight">{chanceRoomAddress?.slice(-1)}</span> */}
         <div className="flex justify-between px-1 w-full">
           <span>
-            {
+            {formatEther(
               //@ts-ignore
-              formatEther((data?.at(1)?.result as string).Uint256?.ticketPrice)
-            }{" "}
+              (data?.at(1)?.result as string).Uint256?.ticketPrice || 0
+            )}{" "}
             Matic
           </span>
           <span className="">

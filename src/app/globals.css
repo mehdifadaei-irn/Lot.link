@@ -104,7 +104,7 @@
 }
 
 /* For widths below 1024px */
-@media (max-width: 1023px) {
+@media (max-width: 1025px) {
   .grid-container {
     grid-template-areas:
       "main"
@@ -134,11 +134,63 @@
   grid-area: cta;
 }
 
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
   }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Hide spin buttons in Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.gradient {
+  background-image: linear-gradient(
+    300deg,
+    hsl(217deg 33% 17%) 0%,
+    hsl(211deg 44% 19%) 33%,
+    hsl(205deg 60% 20%) 45%,
+    hsl(198deg 98% 19%) 54%,
+    hsl(197deg 100% 20%) 60%,
+    hsl(196deg 100% 22%) 64%,
+    hsl(194deg 100% 24%) 68%,
+    hsl(192deg 100% 25%) 71%,
+    hsl(190deg 100% 26%) 73%,
+    hsl(187deg 100% 27%) 75%,
+    hsl(183deg 100% 27%) 77%,
+    hsl(179deg 100% 28%) 78%,
+    hsl(175deg 100% 30%) 79%,
+    hsl(170deg 100% 31%) 80%,
+    hsl(165deg 100% 33%) 81%,
+    hsl(161deg 100% 35%) 82%,
+    hsl(156deg 100% 37%) 83%,
+    hsl(144deg 64% 46%) 84%,
+    hsl(125deg 54% 56%) 85%,
+    hsl(106deg 59% 57%) 86%,
+    hsl(91deg 66% 56%) 88%,
+    hsl(79deg 72% 54%) 90%,
+    hsl(70deg 77% 52%) 92%,
+    hsl(62deg 83% 50%) 95%,
+    hsl(55deg 100% 50%) 100%
+  );
 }

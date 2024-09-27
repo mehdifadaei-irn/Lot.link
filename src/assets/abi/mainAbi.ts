@@ -349,7 +349,7 @@ export const FactoryAbi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-]
+] as const
 
 
 export const RoomAbi = [
@@ -795,4 +795,4 @@ export const RoomAbi = [
     type: "function",
   },
   { stateMutability: "payable", type: "receive" },
-]
+] as const

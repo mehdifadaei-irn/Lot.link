@@ -42,7 +42,7 @@ const SideBar = () => {
               />
             </Link>
             <Link
-              href={""}
+              href={"https://discord.gg/HRKc6KYk"}
               target="_blank"
               className={buttonVariants({
                 variant: "secondary",

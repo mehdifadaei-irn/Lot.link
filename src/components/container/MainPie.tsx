@@ -42,18 +42,19 @@ import { useSearchParams } from "next/navigation";
 import { useReadContract } from "wagmi";
 import { RoomAbi } from "@/assets/abi/mainAbi";
 import { polygon } from "viem/chains";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/stores/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/stores/store";
 import { stringToColour } from "@/lib/generateColorFromAddress";
+import { setChanceRoomStatus } from "@/redux/spinner/spinnerSlice";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#00C49F"];
 export const description = "A donut chart with an active sector";
 const chartData = [
-  { name: "chrome", value: 275 },
-  { name: "safari", value: 200 },
-  { name: "firefox", value: 187 },
-  { name: "edge", value: 173 },
-  { name: "other", value: 90 },
+  { name: "chrome", value: 200 },
+  { name: "safari", value: 9000000000 },
+  { name: "firefox", value: 9000000000 },
+  { name: "edge", value: 9000000000 },
+  { name: "other", value: 9000000000 },
 ];
 const chartConfig = {
   chrome: {
@@ -86,9 +87,14 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
   const { isMobile } = useUnderMobileWindow();
   let myPidata: { name: string; value: number }[] = [];
   let mychartConfig: ChartConfig = {};
-  const { spinnerActiveIndex: SpinnerActiveIndex, pieData } = useSelector(
-    (state: RootState) => state?.spinner
-  );
+
+  const {
+    spinnerActiveIndex: SpinnerActiveIndex,
+    pieData,
+    chanceRoomStatus,
+  } = useSelector((state: RootState) => state?.spinner);
+
+  const dispatch = useDispatch<AppDispatch>();
 
   const {
     // activeIndex,
@@ -100,6 +106,17 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
   } = useOnHoverOpacity();
 
   const {
+    data: StautsData,
+    isLoading: isSatusLoading,
+    isError: StatusError,
+    isSuccess: statusSuccess,
+  } = useReadContract({
+    address: chanceRoomAddress,
+    abi: RoomAbi,
+    functionName: "status",
+  });
+
+  const {
     data: TokenUri,
     isError,
     isLoading,
@@ -108,9 +125,14 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
     address: chanceRoomAddress,
     abi: RoomAbi,
     functionName: "tokenURI",
-    args: ["0"],
+    args: [BigInt(0)],
     chainId: polygon.id,
   });
+
+  if (statusSuccess) {
+    //@ts-ignore
+    dispatch(setChanceRoomStatus(StautsData));
+  }
 
   const parseTokenURI = useCallback((result: string | null): string | null => {
     try {
@@ -148,8 +170,12 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
   if (isSuccess) {
   }
 
+  if (StatusError || isError) {
+    return <div className="h-[58vh] text-slate-200  "></div>;
+  }
+
   if (isLoading) {
-    return <div className="h-[55vh]"></div>;
+    return <div className="h-[58vh] text-slate-200  "></div>;
   }
 
   return (
@@ -162,7 +188,7 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
           >
             ChanceRoom_Sang
           </h1>
-          <div className="flex flow-row gap-x-3 font-sans">
+          <div className="flex flow-row sm:gap-x-3 gap-x-1 font-sans">
             <Link
               href={""}
               target="_blank"
@@ -211,8 +237,18 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 pb-0 !h-full !p-0">
-        <div className="relative ">
+      <CardContent className="flex-1 pb-0 !h-full !p-0 relative ">
+        <div className="absolute flex justify-between ms:px-6 px-3 bottom-3 w-full z-30 text-slate-200 font-semibold text-lg">
+          {isSatusLoading ? (
+            ""
+          ) : (
+            <>
+              <span>{chanceRoomStatus?.at(0)}</span>
+              <span>{chanceRoomStatus?.at(1)}</span>
+            </>
+          )}
+        </div>
+        <div className="relative  ">
           {/* {winnerSelected && (
             <motion.div
               initial={{ scale: 1 }}
@@ -227,7 +263,7 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
           {pieData.length === 0 ||
           myPidata.length === 0 ||
           Object.keys(mychartConfig).length === 0 ? (
-            <div className="text-white  !h-[40vh]"></div>
+            <div className="text-white  !h-[53vh]"></div>
           ) : (
             <div className="relative border-[0.9rem] flex justify-center border-slate-200 p-1 rounded-full  max-w-[490px]  mx-auto max-sm:scale-75 ">
               <Image
@@ -240,12 +276,15 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
                 alt="stopper"
               />
               <motion.div className=" w-full h-full relative">
-                <div className="absolute opacity-85 w-full -z-10 ">
+                <div
+                  className="absolute opacity-85 w-full -z-10 flex justify-center items-center sm:h-[450px] max-[500px]:h-[376px] h-[55vh]
+                 max-[430px]:h-[370px] max-[400px]:h-[290px] "
+                >
                   <img
                     src={nice1 || ""}
                     alt="Main Image"
-                    width={450}
-                    height={340}
+                    width={350}
+                    height={350}
                     className="rounded-full mx-auto translate-y-1 z-0 transition-all duration-500 ease-out"
                     style={{
                       opacity: SpinnerActiveIndex === undefined ? 0.9 : 0,
@@ -255,7 +294,7 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
 
                 <ChartContainer
                   config={mychartConfig}
-                  className="mx-auto aspect-square max-h-[490px]"
+                  className="mx-auto aspect-square max-h-[490px] -rotate-90"
                 >
                   <PieChart className="scale-[1.28]">
                     <ChartTooltip

@@ -6,4 +6,13 @@ export const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#00C49F"];
 export const FactoryContract = {
   address: "0x000004911bedE2053923bAF3b59e1a9f034482C9",
   abi: FactoryAbi,
+  
 } as const;
+
+
+const AllStatus = [
+  ["Sold out","Waiting for roll up"],
+  ["Ticket selling","Winner selected"],
+  ["Not initialized","Deadline execude"],
+  ["Deadline executed","Waiting for refund call"],
+]

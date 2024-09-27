@@ -1,13 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { useReadContract } from "wagmi";
+import { useReadContract, useReadContracts } from "wagmi";
 import { RoomAbi } from "@/assets/abi/mainAbi";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/stores/store";
 import { setMainPieData } from "@/redux/spinner/spinnerSlice";
 import { isPending } from "@reduxjs/toolkit";
 import PlayerCard from "../temp/PlayerCard";
+import { polygon } from "viem/chains";
 
 interface PlayersProps {
   chanceRoomAddress: `0x${string}`;
@@ -22,6 +23,18 @@ const Players = ({ chanceRoomAddress }: PlayersProps) => {
     address: chanceRoomAddress,
     abi: RoomAbi,
     functionName: "layout",
+    chainId: polygon.id,
+  });
+  const {
+    data: WinnerData,
+    isLoading: isWinnerLoading,
+    isSuccess: isWinnerSuccess,
+    isError: isWinnerError,
+  } = useReadContract({
+    address: chanceRoomAddress,
+    abi: RoomAbi,
+    functionName: "winner",
+    chainId: polygon.id,
   });
 
   const SpinnerMainPieData = useSelector(
@@ -30,15 +43,17 @@ const Players = ({ chanceRoomAddress }: PlayersProps) => {
 
   const dispatch = useDispatch<AppDispatch>();
 
+  // console.log(WinnerData, "winner");
+  //0x0000000000000000000000000000000000000000
+
   const {
     data: Events,
     mutate,
     mutateAsync,
-    reset,
-    isIdle,
     isPending,
     isError,
     isSuccess,
+    
   } = useMutation({
     mutationKey: ["getEvents", `${chanceRoomAddress}`],
     mutationFn: async () => {
@@ -84,8 +99,6 @@ const Players = ({ chanceRoomAddress }: PlayersProps) => {
       return data;
     },
     onSuccess(data) {
-      console.log("MOralis SUceed!", data);
-
       const TotalTickets: number = parseInt(
         //@ts-ignore
         contractDataLayout?.Uint256?.maximumTicket
@@ -170,17 +183,19 @@ const Players = ({ chanceRoomAddress }: PlayersProps) => {
       <h1 className="text-slate-200">is Pending...</h1>
     </div>;
   }
-  if (isError) {
+  if (isError || isWinnerError) {
     <div>
       <h1 className="text-slate-200">Error happend...</h1>
     </div>;
   }
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full max-h-[85vh] overflow-y-auto no-scrollbar">
       <div className="w-full h-full flex flex-col pt-4 px-3 ">
-        {/* SpinnerMainPieData.length === 0 || isLayoutLoading */}
-        {SpinnerMainPieData.length === 0 || isLayoutLoading ? (
+        {/* */}
+        {SpinnerMainPieData.length === 0 ||
+        isLayoutLoading ||
+        isWinnerLoading ? (
           <div className="">
             <h3 className="font-handjet text-slate-300 font-bold text-xl">
               Players
@@ -212,6 +227,7 @@ const Players = ({ chanceRoomAddress }: PlayersProps) => {
                     playerIndex={i}
                     //@ts-ignore
                     totallSupply={contractDataLayout?.Uint256?.maximumTicket}
+                    winner={WinnerData?.at(1) as `0x${string}`}
                   />
                 );
               })}

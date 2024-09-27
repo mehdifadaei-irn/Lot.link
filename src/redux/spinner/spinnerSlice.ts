@@ -4,12 +4,14 @@ interface spinnerSlice{
     value: number
     spinnerActiveIndex: number | undefined
     pieData: { name: string; value: number }[]
+    chanceRoomStatus: [string, string]
 }
 
 const initialState: spinnerSlice = {
     value: 23,
     spinnerActiveIndex: undefined,
-    pieData: []
+    pieData: [],
+    chanceRoomStatus: ["",""]
 }
 
 const spinnerSlice = createSlice({
@@ -30,6 +32,9 @@ const spinnerSlice = createSlice({
         },
         setMainPieData: (state, action:PayloadAction<{ name: string; value: number }[]>)=> {
             state.pieData = action.payload
+        },
+        setChanceRoomStatus: (state, action:PayloadAction<[string, string]>)=> {
+            state.chanceRoomStatus = action.payload
         },
     },
     extraReducers: (builder)=> {
@@ -53,6 +58,6 @@ export const increamentAsync = createAsyncThunk(
     }
 )
 
-export const {decrement,increment, setSpinnerActiveIndex, setMainPieData} = spinnerSlice.actions
+export const {decrement,increment, setSpinnerActiveIndex, setMainPieData, setChanceRoomStatus} = spinnerSlice.actions
 
 export default spinnerSlice.reducer

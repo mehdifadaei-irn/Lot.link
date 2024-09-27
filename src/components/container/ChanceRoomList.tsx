@@ -1,10 +1,8 @@
 "use client";
-import { FactoryAbi } from "@/assets/abi/mainAbi";
-import React, { useEffect, useState } from "react";
-import { useReadContract } from "wagmi";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import ChanceRoomCard from "../temp/ChanceRoomCard";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ChanceRoomListProps {
   chanceRoomAddresses: `0x${string}`[];

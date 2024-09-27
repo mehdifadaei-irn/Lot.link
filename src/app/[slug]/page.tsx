@@ -1,10 +1,13 @@
 "use client";
 import { FactoryAbi } from "@/assets/abi/mainAbi";
+import ChanceRoomCTA from "@/components/container/ChanceRoomCTA/ChanceRoomCTA";
 import ChanceRoomList from "@/components/container/ChanceRoomList";
 import ChanceRoomStat from "@/components/container/ChanceRoomStat";
 import MainPie from "@/components/container/MainPie";
 import Players from "@/components/container/Players";
 import { FactoryContract } from "@/constants";
+import { cn } from "@/lib/utils";
+import { polygon } from "viem/chains";
 import { useReadContract } from "wagmi";
 
 export default function Home({ params }: { params: { slug: `0x${string}` } }) {
@@ -15,6 +18,7 @@ export default function Home({ params }: { params: { slug: `0x${string}` } }) {
   } = useReadContract({
     ...FactoryContract,
     functionName: "chanceRooms",
+    chainId: polygon.id
   });
 
   if (isError) {
@@ -42,14 +46,22 @@ export default function Home({ params }: { params: { slug: `0x${string}` } }) {
           {/* MainSpinner */}
           <div className="grid-main grid-item-box ">
             {isLoading ? (
-              <div className="h-[56vh]"></div>
+              <div className="h-[58vh] text-slate-200 "></div>
             ) : (
               <MainPie chanceRoomAddress={params.slug} />
             )}
           </div>
           {/* STAT */}
           <div className="grid-stat grid-item-box">
-            <ChanceRoomStat chanceRoomAddress={params.slug} />
+            {isLoading ? (
+              <div className="!min-h-64"></div>
+            ) : (
+              <ChanceRoomStat
+                chanceRoomAddress={params.slug}
+                //@ts-ignore
+                Round={chanceRooms.indexOf(params.slug)}
+              />
+            )}
           </div>
           {/* ChanceRoomList. POT */}
           <div className="grid-pot grid-item-box ">
@@ -84,7 +96,17 @@ export default function Home({ params }: { params: { slug: `0x${string}` } }) {
             )}
           </div>
           {/* CTA */}
-          <div className="grid-cta grid-item-box">5</div>
+          <div
+            className={cn("grid-cta grid-item-box border-none", {
+              "": true,
+            })}
+          >
+            {isLoading ? (
+              <div className=" h-full border-borderColor border rounded-lg"></div>
+            ) : (
+              <ChanceRoomCTA chanceRoomAddress={params.slug} />
+            )}
+          </div>
         </div>
       </div>
       {/* <MainPie /> */}

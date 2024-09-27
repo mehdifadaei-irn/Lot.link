@@ -1,6 +1,8 @@
 "use client";
 import { FactoryAbi } from "@/assets/abi/mainAbi";
+import ChanceRoomCTA from "@/components/container/ChanceRoomCTA/ChanceRoomCTA";
 import ChanceRoomList from "@/components/container/ChanceRoomList";
+import ChanceRoomStat from "@/components/container/ChanceRoomStat";
 import MainPie from "@/components/container/MainPie";
 import Players from "@/components/container/Players";
 import { FactoryContract } from "@/constants";
@@ -60,12 +62,23 @@ export default function Home() {
             )}
           </div>
           {/* STAT */}
-          <div className="grid-stat grid-item-box">3</div>
+          <div className="grid-stat grid-item-box">
+            {isLoading ? (
+              <div className="!min-h-64"></div>
+            ) : (
+              <ChanceRoomStat
+                chanceRoomAddress={
+                  (chanceRooms as Array<`0x${string}`>).at(-1) as `0x${string}`
+                }
+                //@ts-ignore
+                Round={chanceRooms.length - 1}
+              />
+            )}
+          </div>
           {/* ChanceRoomList. POT */}
           <div className="grid-pot grid-item-box ">
             {isLoading ? (
               <div className="w-f overflow-x-hidden !h-[220px] ">
-                {/* <h1>hell</h1> */}
                 <div className="flex flex-col h-full">
                   <div className="flex justify-start px-2 items-center pt-2">
                     <p className="font-handjet font-semibold text-lg text-slate-100 pl-4">
@@ -96,7 +109,17 @@ export default function Home() {
             )}
           </div>
           {/* CTA */}
-          <div className="grid-cta grid-item-box">5</div>
+          <div className="grid-cta grid-item-box">
+            {isLoading ? (
+              <div className=" h-full border-borderColor border rounded-lg"></div>
+            ) : (
+              <ChanceRoomCTA
+                chanceRoomAddress={
+                  (chanceRooms as Array<`0x${string}`>).at(-1) as `0x${string}`
+                }
+              />
+            )}
+          </div>
         </div>
       </div>
       {/* <MainPie /> */}

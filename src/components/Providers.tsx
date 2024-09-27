@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 
 import DiscordWidget from "./container/DiscordWidget";
+
+import { Toaster } from "sonner";
 import { WagmiProvider } from "wagmi";
 import { config } from "@/configs/wagmi-config";
 import { ConnectKitProvider } from "connectkit";
@@ -29,6 +31,7 @@ const Providers = ({ children }: PropsWithChildren<{}>) => {
             }}
           >
             {children}
+            <Toaster richColors={true} position={"top-center"} theme="system" />
           </ConnectKitProvider>
           <DiscordWidget />
         </QueryClientProvider>

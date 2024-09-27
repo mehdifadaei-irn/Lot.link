@@ -25,7 +25,7 @@ const config = {
         handjet: ['var(--font-handjet)'],
       },
       colors: {
-        border: "hsl(var(--border))",
+        border: "#475569",
         borderColor:"#475569",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
