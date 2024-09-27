@@ -16,7 +16,8 @@ const ChanceRoomList = ({
   const [stepTracker, setStepTracker] = useState<number>(0);
 
   useEffect(() => {
-    if (activeChanceRoom !== "") {
+    if (activeChanceRoom !== "" && chanceRoomAddresses.length !== 0) {
+      console.log(chanceRoomAddresses.length, "lenAddresss");
       let couner =
         chanceRoomAddresses.reverse().indexOf(activeChanceRoom) -
         chanceRoomAddresses.length +
