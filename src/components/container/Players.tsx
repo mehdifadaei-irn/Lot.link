@@ -191,7 +191,7 @@ const Players = ({ chanceRoomAddress }: PlayersProps) => {
 
   return (
     <div className="w-full max-h-[85vh] overflow-y-auto no-scrollbar">
-      <div className="w-full h-full flex flex-col pt-4 px-3 ">
+      <div className="w-full h-full flex flex-col py-4 px-3 ">
         {/* */}
         {SpinnerMainPieData.length === 0 ||
         isLayoutLoading ||

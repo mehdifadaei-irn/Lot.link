@@ -36,6 +36,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { polygon } from "viem/chains";
 import { useReadContract } from "wagmi";
 import { buttonVariants } from "../ui/button";
+import { useTokenUriToSrcImg } from "@/hooks/useTokenUriToSrcImg";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#00C49F"];
 export const description = "A donut chart with an active sector";
@@ -77,7 +78,6 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
   const { isMobile } = useUnderMobileWindow();
   let myPidata: { name: string; value: number }[] = [];
   let mychartConfig: ChartConfig = {};
-  const [parsedNice1, setParsedNice1] = useState<null | string>(null);
 
   const {
     spinnerActiveIndex: SpinnerActiveIndex,
@@ -127,52 +127,7 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
     }
   }, [statusSuccess, StautsData, dispatch]);
 
-  const parseTokenURI = useCallback((result: string | null): string | null => {
-    try {
-      const parsed = result ? JSON.parse(result) : null;
-      if (parsed && typeof parsed === "object" && "image" in parsed) {
-        return parsed.image;
-      }
-      return null;
-    } catch (error) {
-      console.error("Error parsing token URI:", error);
-      return null;
-    }
-  }, []);
-
-  // const nice1 = useMemo(() => {
-  //   if (isSuccess) {
-  //     //@ts-ignore
-  //     // let parsed = atob(TokenUri?.slice(29).toString());
-  //     let parsed2;
-  //     if (TokenUri) {
-  //       parsed2 = Buffer.from(
-  //         TokenUri?.slice(29).toString() as string,
-  //         "base64"
-  //       );
-  //     }
-  //     //@ts-ignore
-  //     // console.log(JSON.parse(parsed2).image, "p22222");
-  //     //@ts-ignore
-  //     return parseTokenURI(parsed2);
-
-  //     // return parseTokenURI(parsed);
-  //   }
-  // }, [isSuccess]);
-
-  useEffect(() => {
-    if (isSuccess && TokenUri && TokenUri.slice(29)) {
-      try {
-        let parsed = Buffer.from(TokenUri.slice(29).toString(), "base64");
-        //@ts-ignore
-        const nice1 = parseTokenURI(parsed);
-        setParsedNice1(nice1);
-      } catch (error) {
-        console.error("Error parsing TokenUri:", error);
-        // Handle the error appropriately
-      }
-    }
-  }, [isSuccess, TokenUri]);
+  const { imageSrc } = useTokenUriToSrcImg(isSuccess, TokenUri);
 
   if (pieData.length !== 0) {
     pieData.map((data, i) => {
@@ -223,12 +178,12 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
           </h1>
           <div className="flex flow-row sm:gap-x-3 gap-x-1 font-sans">
             <Link
-              href={""}
+              href={"history"}
               target="_blank"
               className={buttonVariants({
                 variant: "secondary",
                 className:
-                  "bg-transparent sm:w-[90px] w-[34px] h-[35px] flex flex-row gap-x-1  !p-0 border text-slate-100 border-neutral-700 hover:!bg-slate-800 transition-all duration-300 rounded-2xl",
+                  "bg-transparent sm:w-[90px] z-40 w-[34px] h-[35px] flex flex-row gap-x-1 !p-0 border text-slate-100 border-neutral-700 hover:!bg-slate-800 transition-all duration-300 rounded-2xl",
               })}
             >
               <History size={20} />{" "}
@@ -257,7 +212,7 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
               <ChevronRight size={25} />
             </Link>
             <Link
-              href={""}
+              href={"/"}
               target="_blank"
               className={buttonVariants({
                 variant: "secondary",
@@ -271,13 +226,17 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
         </div>
       </CardHeader>
       <CardContent className="flex-1 pb-0 !h-full !p-0 relative ">
-        <div className="absolute flex justify-between ms:px-6 px-3 bottom-3 w-full z-30 text-slate-200 font-semibold text-lg">
+        <div className="absolute z-[30] flex justify-between ms:px-6 px-3 bottom-3 w-full text-slate-200 font-semibold text-lg">
           {isSatusLoading ? (
             ""
           ) : (
             <>
-              <span>{chanceRoomStatus?.at(0)}</span>
-              <span>{chanceRoomStatus?.at(1)}</span>
+              <span className="sm:text-base text-sm">
+                {chanceRoomStatus?.at(0)}
+              </span>
+              <span className="sm:text-base text-sm">
+                {chanceRoomStatus?.at(1)}
+              </span>
             </>
           )}
         </div>
@@ -313,12 +272,12 @@ export default function MainPie({ chanceRoomAddress }: MainPieProps) {
                   className="absolute opacity-85 w-full -z-10 flex justify-center items-center sm:h-[450px] max-[500px]:h-[376px] h-[55vh]
                  max-[430px]:h-[370px] max-[400px]:h-[290px] "
                 >
-                  {parsedNice1 && (
+                  {imageSrc && (
                     <img
-                      src={parsedNice1 || ""}
+                      src={imageSrc || ""}
                       alt="Main Image"
                       width={350}
-                      height={350}
+                      height={"auto"}
                       className="rounded-full mx-auto translate-y-1 z-0 transition-all duration-500 ease-out"
                       style={{
                         opacity: SpinnerActiveIndex === undefined ? 0.9 : 0,

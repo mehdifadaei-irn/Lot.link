@@ -1,5 +1,6 @@
 "use client";
 import { RoomAbi } from "@/assets/abi/mainAbi";
+import { useTokenUriToSrcImg } from "@/hooks/useTokenUriToSrcImg";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -22,7 +23,6 @@ const ChanceRoomCard = ({
   chanceRoomAddress,
   active = false,
 }: ChanceRoomCardProps) => {
-  const [parsedNice1, setParsedNice1] = useState<null | string>(null);
   const { data, isLoading, refetch, queryKey, isSuccess } = useReadContracts({
     contracts: [
       {
@@ -53,52 +53,8 @@ const ChanceRoomCard = ({
     ],
   });
 
-  const parseTokenURI1 = useCallback((result: string | null): string | null => {
-    try {
-      const parsed = result ? JSON.parse(result) : null;
-      if (parsed && typeof parsed === "object" && "image" in parsed) {
-        return parsed.image;
-      }
-      return null;
-    } catch (error) {
-      console.error("Error parsing token URI:", error);
-      return null;
-    }
-  }, []);
-
-  // const nice1 = useMemo(() => {
-  //   if (isSuccess && Array.isArray(data)) {
-  //     //@ts-ignore
-  //     // let parsed = atob(data[2].result?.slice(29).toString());
-  //     let parsed2;
-  //     if (data[2].result) {
-  //       parsed2 = Buffer.from(data[2].result?.slice(29).toString(), "base64");
-  //     }
-  //     //@ts-ignore
-  //     // console.log(JSON.parse(parsed2).image, "p22222");
-  //     //@ts-ignore
-  //     return parseTokenURI1(parsed2);
-
-  //     // return parseTokenURI1(parsed);
-  //   }
-  // }, [data]);
-
-  useEffect(() => {
-    if (isSuccess && data[2].result && data[2].result?.slice(29)) {
-      try {
-        let parsed = Buffer.from(
-          data[2].result?.slice(29).toString(),
-          "base64"
-        );
-        //@ts-ignore
-        const nice1 = parseTokenURI1(parsed);
-        setParsedNice1(nice1);
-      } catch (error) {
-        console.error("Error parsing data:", error);
-        // Handle the error appropriately
-      }
-    }
-  }, [isSuccess, data]);
+  //@ts-ignore
+  const { imageSrc } = useTokenUriToSrcImg(isSuccess, data?.at(2)?.result);
 
   if (isLoading) {
     return null;
@@ -120,12 +76,13 @@ const ChanceRoomCard = ({
       }}
     >
       <div className="w-full h-32 rounded-t-xl">
-        {parsedNice1 && (
-          <Image
-            src={parsedNice1 || ""}
+        {imageSrc && (
+          <img
+            src={imageSrc || ""}
             // src={parsed}
             width={126}
-            height={50}
+            // height={50}
+            height={"auto"}
             alt={(data?.at(3)?.result as string)?.slice(0, 15) || ""}
             className="rounded-t-xl !max-w-none"
           />

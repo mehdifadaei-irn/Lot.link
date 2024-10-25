@@ -61,7 +61,7 @@ const PlayerCard = ({
             SpinnerActiveIndex === playerIndex ||
             winner.toLocaleLowerCase() ===
               "0x0000000000000000000000000000000000000000",
-          "opacity-50":
+          "!opacity-50":
             SpinnerActiveIndex !== playerIndex &&
             SpinnerActiveIndex != undefined,
           "!border-yellow-400 border-r-8 ":

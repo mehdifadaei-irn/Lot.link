@@ -1,6 +1,6 @@
 "use client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChanceRoomCard from "../temp/ChanceRoomCard";
 import { Button } from "../ui/button";
 
@@ -13,24 +13,31 @@ const ChanceRoomList = ({
   chanceRoomAddresses,
   activeChanceRoom,
 }: ChanceRoomListProps) => {
+  const ref = useRef<boolean>(true);
   const [stepTracker, setStepTracker] = useState<number>(0);
 
   useEffect(() => {
     if (activeChanceRoom !== "" && chanceRoomAddresses.length !== 0) {
-      console.log(chanceRoomAddresses.length, "lenAddresss");
-      let couner =
-        chanceRoomAddresses.reverse().indexOf(activeChanceRoom) -
-        chanceRoomAddresses.length +
-        1;
-      setStepTracker(couner * 10);
+      if (ref.current !== false) {
+        ref.current = false;
+        // console.log(chanceRoomAddresses.length, "lenAddresss");
+        console.log(
+          "active chanceROom is",
+          chanceRoomAddresses.reverse().indexOf(activeChanceRoom)
+        );
+        let couner =
+          chanceRoomAddresses.reverse().indexOf(activeChanceRoom) -
+          chanceRoomAddresses.length +
+          1;
+        setStepTracker(couner * 10);
+      }
     } else {
       setStepTracker(0);
     }
-  }, [activeChanceRoom]);
+  }, []);
 
   return (
     <div className="w-f overflow-x-hidden !h-[220px] ">
-      {/* <h1>hell</h1> */}
       <div className="flex flex-col h-full">
         <div className="flex justify-between pl-2 pr-7 items-center pt-2">
           <p className="font-handjet font-semibold text-lg text-slate-100 pl-4 ">
